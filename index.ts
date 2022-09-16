@@ -6,7 +6,7 @@ const app: Application = express();
 app.use(json());
 
 app.get('/', (req, res) => {
-    res.send('hi');
+    res.redirect('/');
 });
 
 app.listen(port, () => {
