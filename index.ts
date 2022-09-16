@@ -5,10 +5,6 @@ const app: Application = express();
 
 app.use(json());
 
-app.get('/', (req, res) => {
-    console.log('redirecting');
-    res.redirect('/');
-});
 
 app.listen(port, () => {
     console.log(`Server started at port ${port}`);
