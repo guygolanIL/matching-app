@@ -6,6 +6,7 @@ const app: Application = express();
 app.use(json());
 
 app.get('/', (req, res) => {
+    console.log('redirecting');
     res.redirect('/');
 });
 
