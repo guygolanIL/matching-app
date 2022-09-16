@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node index.ts",
-    "dev": "nodemon index.ts"
+    "dev": "nodemon index.ts",
+    "migrate:deploy": "npx prisma migrate deploy"
   },
   "author": "Guy.Golan",
   "license": "ISC",
