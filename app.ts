@@ -1,11 +1,11 @@
 import { config } from 'dotenv';
 config();
+require('express-async-errors');
 import express, { Application, json } from 'express';
 import { prismaClient } from './data';
-import { loginRouter } from './routers/login';
-import { isAuthenticated } from './auth/config/passport';
-import { protectedRouter } from './routers/protectedRouter';
+import { userRouter } from './routers/user/user';
 import { setupAuth } from './auth';
+import { errorHandler } from './errors/error-handler';
 
 const port = process.env.PORT || 3000;
 const app: Application = express();
@@ -14,8 +14,9 @@ setupAuth(app);
 
 app.use(json());
 
-app.use("/protected", isAuthenticated, protectedRouter);
-app.use("/login", loginRouter);
+app.use("/user", userRouter);
+
+app.use(errorHandler);
 
 app.listen(port, () => {
     prismaClient.$connect()
