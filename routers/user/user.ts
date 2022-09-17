@@ -32,7 +32,7 @@ userRouter.post(
         }
 
         const user = await userService.create(email, password);
-        res.status(201).send({ status: 'ok', data: { user } });
+        res.status(201).send({ data: { id: user.id } });
 
     });
 
