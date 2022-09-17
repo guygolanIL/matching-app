@@ -33,5 +33,5 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
     if (req.isAuthenticated()) {
         return next();
     }
-    res.redirect("/login");
+    res.send("not logged in");
 };

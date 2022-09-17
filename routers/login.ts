@@ -3,7 +3,7 @@ import passport from "passport";
 
 export const loginRouter = Router();
 
-loginRouter.get('/', passport.authenticate('local', {
+loginRouter.post('/', passport.authenticate('local', {
     successReturnToOrRedirect: '/login/success',
     failureRedirect: '/login/failure',
 }));

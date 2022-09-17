@@ -1,9 +1,9 @@
 import { User } from "@prisma/client";
-import { db } from "."
+import { prismaClient } from "."
 
 export const userService = {
     async findByEmail(email: string): Promise<User | null> {
-        const user: User | null = await db.user.findFirst({
+        const user: User | null = await prismaClient.user.findFirst({
             where: {
                 email,
             }
