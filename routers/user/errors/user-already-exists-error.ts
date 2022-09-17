@@ -1,4 +1,4 @@
-import { AbstractApplicationError } from "../../../errors/abstract-application-error";
+import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
 
 export class UserAlreadyExistsError extends AbstractApplicationError {
     statusCode: number = 400;

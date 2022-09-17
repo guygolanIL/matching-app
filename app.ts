@@ -5,7 +5,7 @@ import express, { Application, json } from 'express';
 import { prismaClient } from './data';
 import { userRouter } from './routers/user/user';
 import { setupAuth } from './auth';
-import { errorHandler } from './errors/error-handler';
+import { errorHandler } from './util/errors/error-handler';
 
 const port = process.env.PORT || 3000;
 const app: Application = express();

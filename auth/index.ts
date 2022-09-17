@@ -5,6 +5,7 @@ import connectPostgres from 'connect-pg-simple';
 import { Strategy } from "passport-local";
 import { prismaClient } from "../data";
 import { User } from "@prisma/client";
+import { verifyPassword } from "../util/hash";
 
 const PostgresStore = connectPostgres(session);
 const LocalStrategy = Strategy;
@@ -31,15 +32,20 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
             email,
         }
     })
-        .then((user: User | null) => {
+        .then(async (user: User | null) => {
             if (!user) {
                 console.warn(`no user found with email ${email}`);
-                done(null);
+                return done(null);
             }
-            done(null, user);
+            const verified = await verifyPassword(password, user!.password);
+            if (verified) {
+                return done(null, user);
+            } else {
+                return done(null, false);
+            }
         })
         .catch(e => {
-            done(e);
+            return done(e);
         });
 }));
 
