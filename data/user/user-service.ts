@@ -1,5 +1,11 @@
-import { User } from "@prisma/client";
+import { Attitude, User, UserClassification } from "@prisma/client";
 import { prismaClient } from "../index";
+
+type ClassifyUserOptions = {
+    userId: number;
+    targetUserId: number;
+    attitude: Attitude;
+};
 
 export const userService = {
     async findByEmail(email: string): Promise<User | null> {
@@ -33,6 +39,25 @@ export const userService = {
                 latitude,
                 longtitude
             }
+        });
+    },
+
+    async classifyUser({ attitude, targetUserId, userId }: ClassifyUserOptions): Promise<UserClassification> {
+        return await prismaClient.userClassification.upsert({
+            create: {
+                attitude,
+                classifierUserId: userId,
+                classifiedUserId: targetUserId,
+            },
+            update: {
+                attitude,
+            },
+            where: {
+                classifierUserId_classifiedUserId: {
+                    classifierUserId: userId,
+                    classifiedUserId: targetUserId
+                }
+            },
         });
     }
 }

@@ -6,22 +6,20 @@ import { userService } from "../../data/user/user-service";
 import { validateRequest } from "../../util/middlewares/validate-request";
 import { UserAlreadyExistsError } from "./errors/user-already-exists-error";
 import { hashPassword } from "../../util/hash";
-import { prismaClient } from "../../data";
+import { Attitude } from "@prisma/client";
 
 export const userRouter = Router();
 
-const loginSchema = z.object({
-    body: z.object({
-        email: z.string().email(),
-        password: z.string(),
-        longtitude: z.number(),
-        latitude: z.number(),
-    })
-});
-
 userRouter.post(
     '/login/password',
-    validateRequest(loginSchema),
+    validateRequest(z.object({
+        body: z.object({
+            email: z.string().email(),
+            password: z.string(),
+            longtitude: z.number(),
+            latitude: z.number(),
+        })
+    })),
     passport.authenticate('local'),
     async (req, res) => {
         const { latitude, longtitude, email } = req.body;
@@ -30,16 +28,14 @@ userRouter.post(
     }
 );
 
-const registerSchema = z.object({
-    body: z.object({
-        email: z.string().email(),
-        password: z.string(),
-    })
-});
-
 userRouter.post(
     '/register/password',
-    validateRequest(registerSchema),
+    validateRequest(z.object({
+        body: z.object({
+            email: z.string().email(),
+            password: z.string(),
+        })
+    })),
     async (req, res) => {
         const { email, password } = req.body;
 
@@ -62,12 +58,28 @@ userRouter.post('/logout', function (req, res, next) {
     });
 });
 
-userRouter.get(
-    '/privateData',
+
+const classifyRequestBodySchema = z.object({
+    classifiedUserId: z.number(),
+    attitude: z.enum([Attitude.POSITIVE, Attitude.NEGATIVE]),
+});
+type ClassifyRequestBody = z.infer<typeof classifyRequestBodySchema>;
+userRouter.post(
+    '/classify',
     isAuthenticated,
-    (req, res) => {
-        res.json({
-            private: req.session
+    validateRequest(z.object({
+        body: classifyRequestBodySchema
+    })),
+    async (req, res) => {
+        const requestBody: ClassifyRequestBody = req.body;
+        const { attitude, classifiedUserId } = requestBody;
+
+        const classification = await userService.classifyUser({
+            userId: req.user!.id,
+            attitude,
+            targetUserId: classifiedUserId
         });
+
+        res.status(201).json({ data: classification });
     }
 );

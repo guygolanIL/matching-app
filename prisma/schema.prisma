@@ -21,13 +21,13 @@ model User {
   name String?
 }
 
-enum ClassificationAttitude {
+enum Attitude {
   POSITIVE
   NEGATIVE
 }
 
 model UserClassification {
-  attitude ClassificationAttitude
+  attitude Attitude @default(POSITIVE)
 
   classifierUserId Int
   classifiedUserId Int

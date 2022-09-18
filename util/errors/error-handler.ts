@@ -30,10 +30,12 @@ function generalErrorParser(e: Error): ApiErrorResponse {
 export function errorHandler(error: Error, req: Request, res: Response, next: NextFunction) {
 
     if (error instanceof ZodError) {
+        console.info(error);
         return res.status(400).json(zodErrorParser(error));
     }
 
     if (error instanceof AbstractApplicationError) {
+        console.info(error);
         return res.status(error.statusCode).json(error.toJson());
     }
 
