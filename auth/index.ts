@@ -3,7 +3,7 @@ import session from "express-session";
 import passport from "passport";
 import connectPostgres from 'connect-pg-simple';
 import { Strategy } from "passport-local";
-import { prismaClient } from "../data";
+import { prismaClient } from "../data/prisma-client";
 import { User } from "@prisma/client";
 import { verifyPassword } from "../util/hash";
 

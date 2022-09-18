@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 config();
 require('express-async-errors');
 import express, { Application, json } from 'express';
-import { prismaClient } from './data';
+import { prismaClient } from './data/prisma-client';
 import { userRouter } from './routers/user/user';
 import { setupAuth } from './auth';
 import { errorHandler } from './util/errors/error-handler';
