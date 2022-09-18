@@ -8,10 +8,34 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  password String
-  name     String?
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  password     String
+  longtitude   Float    @default(0) @db.DoublePrecision
+  latitude     Float    @default(0) @db.DoublePrecision
+  registeredAt DateTime @default(now())
+
+  userClassifications UserClassification[] @relation("classifications")
+  classifiedBy        UserClassification[] @relation("classifiedBy")
+
+  name String?
+}
+
+enum ClassificationAttitude {
+  POSITIVE
+  NEGATIVE
+}
+
+model UserClassification {
+  attitude ClassificationAttitude
+
+  classifierUserId Int
+  classifiedUserId Int
+
+  classifierUser User @relation("classifications", fields: [classifierUserId], references: [id])
+  classifiedUser User @relation("classifiedBy", fields: [classifiedUserId], references: [id])
+
+  @@id([classifierUserId, classifiedUserId])
 }
 
 model session {

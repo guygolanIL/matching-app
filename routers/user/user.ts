@@ -6,27 +6,40 @@ import { userService } from "../../data/user/user-service";
 import { validateRequest } from "../../util/middlewares/validate-request";
 import { UserAlreadyExistsError } from "./errors/user-already-exists-error";
 import { hashPassword } from "../../util/hash";
+import { prismaClient } from "../../data";
 
 export const userRouter = Router();
 
-const schema = z.object({
+const loginSchema = z.object({
     body: z.object({
         email: z.string().email(),
-        password: z.string()
+        password: z.string(),
+        longtitude: z.number(),
+        latitude: z.number(),
     })
 });
 
 userRouter.post(
     '/login/password',
-    validateRequest(schema),
-    passport.authenticate('local'), (req, res) => {
+    validateRequest(loginSchema),
+    passport.authenticate('local'),
+    async (req, res) => {
+        const { latitude, longtitude, email } = req.body;
+        await userService.updateLocation(email, { longtitude, latitude });
         res.status(200).send('authenticated');
     }
 );
 
+const registerSchema = z.object({
+    body: z.object({
+        email: z.string().email(),
+        password: z.string(),
+    })
+});
+
 userRouter.post(
     '/register/password',
-    validateRequest(schema),
+    validateRequest(registerSchema),
     async (req, res) => {
         const { email, password } = req.body;
 

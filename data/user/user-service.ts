@@ -11,6 +11,7 @@ export const userService = {
 
         return user;
     },
+
     async create(email: string, password: string): Promise<User> {
         const user = await prismaClient.user.create({
             data: {
@@ -20,5 +21,18 @@ export const userService = {
         });
 
         return user;
+    },
+
+    async updateLocation(email: string, location: { longtitude: number, latitude: number }): Promise<void> {
+        const { latitude, longtitude } = location;
+        await prismaClient.user.update({
+            where: {
+                email
+            },
+            data: {
+                latitude,
+                longtitude
+            }
+        });
     }
 }
