@@ -11,9 +11,9 @@ const PostgresStore = connectPostgres(session);
 const LocalStrategy = Strategy;
 
 passport.serializeUser(function (user, cb) {
-    const { email, id } = user as SessionUser;
+    const { email, id, latitude, longitude, name, registeredAt } = user as SessionUser;
     process.nextTick(function () {
-        cb(null, { id, email });
+        cb(null, { id, email, latitude, longitude, name, registeredAt });
     });
 });
 
@@ -62,7 +62,7 @@ export function setupAuth(app: Application) {
     app.use(passport.authenticate('session'));
 }
 
-export type SessionUser = Pick<User, "email" | "id">;
+export type SessionUser = Omit<User, "password">;
 declare global {
     namespace Express {
         interface User extends SessionUser { }
@@ -78,3 +78,7 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
     }
     res.send("not logged in");
 };
+
+export function getSessionUser(req: Request): SessionUser {
+    return req.user as SessionUser;
+}

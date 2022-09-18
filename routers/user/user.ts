@@ -1,85 +1,46 @@
 import { Router } from "express";
 import passport from "passport";
-import z from 'zod';
-import { isAuthenticated } from "../../auth";
-import { userService } from "../../data/user/user-service";
 import { validateRequest } from "../../util/middlewares/validate-request";
-import { UserAlreadyExistsError } from "./errors/user-already-exists-error";
-import { hashPassword } from "../../util/hash";
-import { Attitude } from "@prisma/client";
+import { login, loginRequestSchema } from "./controllers/login";
+import { register, registerRequestSchema } from "./controllers/register";
+import { classify, classifyRequestSchema } from "./controllers/classify";
+import { feed } from "./controllers/feed";
+import { isAuthenticated } from "../../auth";
 
 export const userRouter = Router();
 
 userRouter.post(
     '/login/password',
-    validateRequest(z.object({
-        body: z.object({
-            email: z.string().email(),
-            password: z.string(),
-            longtitude: z.number(),
-            latitude: z.number(),
-        })
-    })),
+    validateRequest(loginRequestSchema),
     passport.authenticate('local'),
-    async (req, res) => {
-        const { latitude, longtitude, email } = req.body;
-        await userService.updateLocation(email, { longtitude, latitude });
-        res.status(200).send('authenticated');
-    }
+    login,
 );
 
 userRouter.post(
     '/register/password',
-    validateRequest(z.object({
-        body: z.object({
-            email: z.string().email(),
-            password: z.string(),
-        })
-    })),
-    async (req, res) => {
-        const { email, password } = req.body;
+    validateRequest(registerRequestSchema),
+    register,
+);
 
-        const alreadyExistingUser = await userService.findByEmail(email);
-
-        if (alreadyExistingUser) {
-            throw new UserAlreadyExistsError(email);
-        }
-
-        const hashedPassword = await hashPassword(password);
-        const user = await userService.create(email, hashedPassword);
-        res.status(201).send({ data: { id: user.id } });
+userRouter.post(
+    '/logout',
+    function (req, res, next) {
+        req.logout(function (err) {
+            if (err) { return next(err); }
+            res.status(200).send('session terminated');
+        });
     }
 );
 
-userRouter.post('/logout', function (req, res, next) {
-    req.logout(function (err) {
-        if (err) { return next(err); }
-        res.status(200).send('session terminated');
-    });
-});
-
-
-const classifyRequestBodySchema = z.object({
-    classifiedUserId: z.number(),
-    attitude: z.enum([Attitude.POSITIVE, Attitude.NEGATIVE]),
-});
-type ClassifyRequestBody = z.infer<typeof classifyRequestBodySchema>;
 userRouter.post(
     '/classify',
     isAuthenticated,
-    validateRequest(z.object({
-        body: classifyRequestBodySchema
-    })),
-    async (req, res) => {
-        const requestBody: ClassifyRequestBody = req.body;
-        const { attitude, classifiedUserId } = requestBody;
+    validateRequest(classifyRequestSchema),
+    classify,
+);
 
-        const classification = await userService.classifyUser({
-            userId: req.user!.id,
-            attitude,
-            targetUserId: classifiedUserId
-        });
-
-        res.status(201).json({ data: classification });
-    }
+userRouter.get(
+    '/feed',
+    isAuthenticated,
+    feed,
 );
