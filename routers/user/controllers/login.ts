@@ -6,13 +6,15 @@ export const loginRequestSchema = z.object({
     body: z.object({
         email: z.string().email(),
         password: z.string(),
-        longtitude: z.number(),
+        longitude: z.number(),
         latitude: z.number(),
     })
 })
 
+type LoginRequestPayload = z.infer<typeof loginRequestSchema>['body'];
+
 export async function login(req: Request, res: Response) {
-    const { latitude, longitude, email } = req.body;
+    const { latitude, longitude, email } = req.body as LoginRequestPayload;
     await userService.updateLocation(email, { longitude, latitude });
     res.status(200).send('authenticated');
 }

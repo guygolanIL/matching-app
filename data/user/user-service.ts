@@ -64,7 +64,6 @@ export async function updateLocation(email: string, location: Location): Promise
     });
 }
 
-
 type FindUsersByDistanceOptions = {
     userEmail: string;
     location: Location;
@@ -82,8 +81,6 @@ export async function findUsersByDistance({
             calculate_distance(${location.latitude}, ${location.longitude}, u.latitude, u.longitude, 'K') AS distance
         FROM public."User" u
         WHERE 
-            calculate_distance(${location.latitude}, ${location.longitude}, u.latitude, u.longitude, 'K') <= ${distanceLimit} 
-            AND
-            email != '${userEmail}';
+            calculate_distance(${location.latitude}, ${location.longitude}, u.latitude, u.longitude, 'K') <= ${distanceLimit} AND u.email != ${userEmail};
     `;
 }
