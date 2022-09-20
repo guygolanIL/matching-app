@@ -81,19 +81,17 @@ export async function findUsersProximateToUser({
     unit = 'K'
 }: FindUsersByDistanceOptions): Promise<FindUsersByDistanceResult> {
     console.log(`find proximate users for user ${user.id} with location (${user.latitude}, ${user.longitude}) with max distance of ${distanceLimit}`);
-    return await prismaClient.$queryRaw<FindUsersByDistanceResult>`       
+    return await prismaClient.$queryRaw<FindUsersByDistanceResult>`     
         SELECT 
-            ID,
-        	EMAIL,
-        	CALCULATE_DISTANCE(${user.latitude}, ${user.longitude}, unclassified_users.LATITUDE, unclassified_users.LONGITUDE, ${unit}) AS DISTANCE
-        FROM
-        	(SELECT *
-        		FROM PUBLIC."User" unclassified_users
-        		WHERE unclassified_users.ID not in
-        				(SELECT UC."classifiedUserId"
-        					FROM PUBLIC."UserClassification" UC
-        					WHERE UC."classifierUserId" = ${user.id} )
-        			AND ID != ${user.id} ) as unclassified_users
-        WHERE CALCULATE_DISTANCE(${user.latitude}, ${user.longitude}, unclassified_users.LATITUDE, unclassified_users.LONGITUDE, ${unit}) <= ${distanceLimit};
+            u.id,
+            u.email,
+            CALCULATE_DISTANCE(${user.latitude}, ${user.longitude}, u.LATITUDE, u.LONGITUDE, ${unit}) AS distance
+        FROM PUBLIC."User" u
+        WHERE u.id not in
+                (SELECT uc."classifiedUserId"
+                    FROM PUBLIC."UserClassification" uc
+                    WHERE uc."classifierUserId" = ${user.id})
+            AND u.id != ${user.id}
+            AND CALCULATE_DISTANCE(${user.latitude}, ${user.longitude}, u.LATITUDE, u.LONGITUDE, ${unit}) <= ${distanceLimit}
     `;
 }
