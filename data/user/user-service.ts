@@ -1,4 +1,5 @@
-import { Attitude, User, UserClassification } from "@prisma/client";
+import { Attitude, prisma, User, UserClassification } from "@prisma/client";
+import { SessionUser } from "../../auth";
 import { prismaClient } from "../prisma-client";
 
 export async function findByEmail(email: string): Promise<User | null> {
@@ -65,22 +66,34 @@ export async function updateLocation(email: string, location: Location): Promise
 }
 
 type FindUsersByDistanceOptions = {
-    userEmail: string;
-    location: Location;
+    user: SessionUser;
     distanceLimit: number;
+    unit?: 'K' | 'M';
 };
-export async function findUsersByDistance({
-    userEmail,
-    location,
-    distanceLimit
-}: FindUsersByDistanceOptions): Promise<{ id: number; email: string; distance: number; }[]> {
-    return await prismaClient.$queryRaw`
+type FindUsersByDistanceResult = Array<{
+    id: number;
+    email: string;
+    distance: number;
+}>;
+export async function findUsersProximateToUser({
+    user,
+    distanceLimit,
+    unit = 'K'
+}: FindUsersByDistanceOptions): Promise<FindUsersByDistanceResult> {
+    console.log(`find proximate users for user ${user.id} with location (${user.latitude}, ${user.longitude}) with max distance of ${distanceLimit}`);
+    return await prismaClient.$queryRaw<FindUsersByDistanceResult>`       
         SELECT 
-            id,
-            email,
-            calculate_distance(${location.latitude}, ${location.longitude}, u.latitude, u.longitude, 'K') AS distance
-        FROM public."User" u
-        WHERE 
-            calculate_distance(${location.latitude}, ${location.longitude}, u.latitude, u.longitude, 'K') <= ${distanceLimit} AND u.email != ${userEmail};
+            ID,
+        	EMAIL,
+        	CALCULATE_DISTANCE(${user.latitude}, ${user.longitude}, unclassified_users.LATITUDE, unclassified_users.LONGITUDE, ${unit}) AS DISTANCE
+        FROM
+        	(SELECT *
+        		FROM PUBLIC."User" unclassified_users
+        		WHERE unclassified_users.ID not in
+        				(SELECT UC."classifiedUserId"
+        					FROM PUBLIC."UserClassification" UC
+        					WHERE UC."classifierUserId" = ${user.id} )
+        			AND ID != ${user.id} ) as unclassified_users
+        WHERE CALCULATE_DISTANCE(${user.latitude}, ${user.longitude}, unclassified_users.LATITUDE, unclassified_users.LONGITUDE, ${unit}) <= ${distanceLimit};
     `;
 }
