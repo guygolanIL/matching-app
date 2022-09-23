@@ -6,6 +6,7 @@ import { Strategy } from "passport-local";
 import { prismaClient } from "../data/prisma-client";
 import { User } from "@prisma/client";
 import { verifyPassword } from "../util/hash";
+import { createMessageResponse } from "../util/api/response";
 
 const PostgresStore = connectPostgres(session);
 const LocalStrategy = Strategy;
@@ -76,7 +77,7 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
     if (req.isAuthenticated()) {
         return next();
     }
-    res.send("not logged in");
+    res.status(401).send(createMessageResponse("unauthorized"));
 };
 
 export function getSessionUser(req: Request): SessionUser {
