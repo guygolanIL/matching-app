@@ -6,7 +6,8 @@ import { register, registerRequestSchema } from "./controllers/register";
 import { classify, classifyRequestSchema } from "./controllers/classify";
 import { feed } from "./controllers/feed";
 import { isAuthenticated } from "../../auth";
-import { createMessageResponse } from "../../util/api/response";
+import { ZodError } from "zod";
+import { AuthError } from "./errors/auth-error";
 
 export const userRouter = Router();
 
@@ -16,7 +17,9 @@ userRouter.post(
     passport.authenticate('local', { failWithError: true }),
     login,
     function loginError(err: Error, req: Request, res: Response, next: NextFunction) {
-        return res.status(401).json(createMessageResponse("failed to authenticate"));
+        if (err instanceof ZodError) throw err;
+
+        throw new AuthError();
     }
 );
 
