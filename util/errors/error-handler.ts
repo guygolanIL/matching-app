@@ -40,6 +40,5 @@ export function errorHandler(error: Error, req: Request, res: Response, next: Ne
     }
 
     console.error(error);
-
     return res.status(500).json(generalErrorParser(error));
 }

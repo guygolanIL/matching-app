@@ -1,8 +1,8 @@
 import { Attitude } from "@prisma/client";
 import { Request, Response } from "express";
 import { z } from "zod";
-import { getSessionUser } from "../../../auth";
 import * as userService from "../../../data/user/user-service";
+import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 
 export const classifyRequestSchema = z.object({
     body: z.object({

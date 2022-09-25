@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import * as userService from "../../../data/user/user-service";
 import { createDataResponse } from "../../../util/api/response";
+import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
 import { hashPassword } from "../../../util/hash";
-import { UserAlreadyExistsError } from "../errors/user-already-exists-error";
 
 export const registerRequestSchema = z.object({
     body: z.object({
@@ -23,5 +23,16 @@ export async function register(req: Request, res: Response) {
     const hashedPassword = await hashPassword(password);
     const user = await userService.create(email, hashedPassword);
 
-    res.status(201).send(createDataResponse({ id: user.id }));
+    res.status(201).json(createDataResponse({ id: user.id }));
+}
+
+
+export class UserAlreadyExistsError extends AbstractApplicationError {
+    statusCode: number = 400;
+    message: string;
+
+    constructor(email: string) {
+        super();
+        this.message = `user with email ${email} already exists`;
+    }
 }

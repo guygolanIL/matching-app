@@ -1,5 +1,4 @@
 import { Attitude, prisma, User, UserClassification } from "@prisma/client";
-import { SessionUser } from "../../auth";
 import { prismaClient } from "../prisma-client";
 
 export async function findByEmail(email: string): Promise<User | null> {
@@ -66,7 +65,7 @@ export async function updateLocation(email: string, location: Location): Promise
 }
 
 type FindUsersByDistanceOptions = {
-    user: SessionUser;
+    user: { id: number; longitude: number; latitude: number };
     distanceLimit: number;
     unit?: 'K' | 'M';
 };

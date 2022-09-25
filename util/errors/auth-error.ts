@@ -1,4 +1,4 @@
-import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
+import { AbstractApplicationError } from "./abstract-application-error";
 
 export class AuthError extends AbstractApplicationError {
     statusCode: number = 401;

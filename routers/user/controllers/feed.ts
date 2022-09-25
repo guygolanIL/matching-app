@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { getSessionUser } from "../../../auth";
 import * as userService from "../../../data/user/user-service";
+import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 
 export async function feed(req: Request, res: Response) {
     const user = getSessionUser(req);
@@ -10,5 +10,5 @@ export async function feed(req: Request, res: Response) {
         distanceLimit: distance,
     });
 
-    res.json({ data: users });
+    res.status(200).json({ data: users });
 }
