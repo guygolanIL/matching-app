@@ -4,5 +4,7 @@ const refreshTokens = [];
 
 export function logout(req: Request, res: Response) {
     //TODO revoke refresh token
-    throw new Error("implement me");
+    console.log('logging out')
+    res.status(200).json({ yay: 'asd' });
+    // throw new Error("implement me");
 }
