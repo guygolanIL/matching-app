@@ -1,6 +1,9 @@
+import { User } from "@prisma/client";
 import { Request, Response } from "express";
 import { z } from "zod";
+
 import { prismaClient } from "../../../data/prisma-client";
+import { TokenCache } from "../../../data/redis";
 import * as userService from '../../../data/user/user-service';
 import { createApiResponse } from "../../../util/api/response";
 import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
@@ -8,7 +11,7 @@ import { SecretError } from "../../../util/errors/secret-error";
 import { verifyPassword } from "../../../util/hash";
 import { createJwt } from "../../../util/jwt";
 
-async function validate(email: string, password: string): Promise<void> {
+async function validate(email: string, password: string): Promise<User> {
     const foundUser = await prismaClient.user.findUnique({
         where: {
             email
@@ -19,6 +22,8 @@ async function validate(email: string, password: string): Promise<void> {
 
     const correctPass: boolean = await verifyPassword(password, foundUser.password);
     if (!correctPass) throw new LoginValidationError();
+
+    return foundUser;
 }
 
 export const loginRequestSchema = z.object({
@@ -35,7 +40,7 @@ type LoginRequestPayload = z.infer<typeof loginRequestSchema>['body'];
 export async function login(req: Request, res: Response) {
     const { latitude, longitude, email, password } = req.body as LoginRequestPayload;
 
-    await validate(email, password);
+    const user = await validate(email, password);
 
     const jwtSecret = process.env.JWT_SECRET;
     const refreshJwtSecret = process.env.JWT_REFRESH_SECRET;
@@ -45,7 +50,7 @@ export async function login(req: Request, res: Response) {
     const accessToken = createJwt({ email }, { secret: jwtSecret, expirationMinutes: 60 });
     const refreshToken = createJwt({ email }, { secret: refreshJwtSecret, expirationMinutes: 60 });
 
-    //TODO update refresh token store
+    await TokenCache.saveRefreshToken(user.id, refreshToken);
 
     await userService.updateLocation(email, { longitude, latitude });
 

@@ -1,10 +1,15 @@
 import { Request, Response } from "express";
 
-const refreshTokens = [];
+import { TokenCache } from "../../../data/redis";
+import { createApiResponse } from "../../../util/api/response";
+import { getRequestToken, getSessionUser } from "../../../util/middlewares/isAuthenticated";
 
-export function logout(req: Request, res: Response) {
-    //TODO revoke refresh token
-    console.log('logging out')
-    res.status(200).json({ yay: 'asd' });
-    // throw new Error("implement me");
+
+export async function logout(req: Request, res: Response) {
+    const user = getSessionUser(req);
+    await TokenCache.revoke(user.id);
+
+    res.status(200).json(createApiResponse({
+        yay: 'yoog'
+    }));
 }

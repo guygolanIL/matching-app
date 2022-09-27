@@ -23,6 +23,7 @@ userRouter.post(
 
 userRouter.post(
     '/logout',
+    isAuthenticated,
     logout,
 );
 

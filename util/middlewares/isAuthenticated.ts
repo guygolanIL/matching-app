@@ -19,9 +19,7 @@ export async function isAuthenticated(
     res: Response,
     next: NextFunction
 ) {
-    const authenticationHeader = req.header("Authorization"); // Bearer <TOKEN>
-    const token = authenticationHeader?.split(" ")[1];
-
+    const token = getRequestToken(req);
     console.log("received token: " + token);
     if (!token) {
         throw new AuthError();
@@ -56,7 +54,7 @@ export async function isAuthenticated(
                 name,
                 registeredAt
             };
-            console.log("user: authenticated", user.email);
+            console.log("authenticated user", user.email);
             next();
         }
 
@@ -72,6 +70,12 @@ export function getSessionUser(req: Request): SessionUser {
     return user;
 }
 
+export function getRequestToken(req: Request): string | undefined {
+    const authenticationHeader = req.header("Authorization"); // Bearer <TOKEN>
+    const token = authenticationHeader?.split(" ")[1];
+
+    return token;
+}
 
 class AuthError extends AbstractApplicationError {
     statusCode: number = 401;

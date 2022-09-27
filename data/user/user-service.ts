@@ -1,4 +1,4 @@
-import { Attitude, prisma, User, UserClassification } from "@prisma/client";
+import { Attitude, User, UserClassification } from "@prisma/client";
 import { prismaClient } from "../prisma-client";
 
 export async function findByEmail(email: string): Promise<User | null> {
