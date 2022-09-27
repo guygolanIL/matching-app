@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import { prismaClient } from "../../../data/prisma-client";
 import * as userService from '../../../data/user/user-service';
-import { createDataResponse } from "../../../util/api/response";
+import { createApiResponse } from "../../../util/api/response";
 import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
 import { SecretError } from "../../../util/errors/secret-error";
 import { verifyPassword } from "../../../util/hash";
@@ -49,7 +49,7 @@ export async function login(req: Request, res: Response) {
 
     await userService.updateLocation(email, { longitude, latitude });
 
-    res.status(201).json(createDataResponse({
+    res.status(201).json(createApiResponse({
         accessToken,
         refreshToken,
     }));

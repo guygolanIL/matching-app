@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as userService from "../../../data/user/user-service";
-import { createDataResponse } from "../../../util/api/response";
+import { createApiResponse } from "../../../util/api/response";
 import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 
 export async function feed(req: Request, res: Response) {
@@ -11,5 +11,5 @@ export async function feed(req: Request, res: Response) {
         distanceLimit: distance,
     });
 
-    res.status(200).json(createDataResponse(users));
+    res.status(200).json(createApiResponse(users));
 }

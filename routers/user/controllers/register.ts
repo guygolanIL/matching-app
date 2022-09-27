@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { z } from "zod";
 import * as userService from "../../../data/user/user-service";
-import { createDataResponse } from "../../../util/api/response";
+import { createApiResponse } from "../../../util/api/response";
 import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
 import { hashPassword } from "../../../util/hash";
 
@@ -23,7 +23,7 @@ export async function register(req: Request, res: Response) {
     const hashedPassword = await hashPassword(password);
     const user = await userService.create(email, hashedPassword);
 
-    res.status(201).json(createDataResponse({ id: user.id }));
+    res.status(201).json(createApiResponse({ id: user.id }));
 }
 
 

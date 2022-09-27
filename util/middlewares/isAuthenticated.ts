@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { prismaClient } from "../../data/prisma-client";
-import { AuthError } from "../errors/auth-error";
 import { SecretError } from "../errors/secret-error";
 import { UserJwtPayload, verifyJwt } from "../jwt";
-import { JwtPayload } from 'jsonwebtoken';
 import { User } from "@prisma/client";
+import { AbstractApplicationError } from "../errors/abstract-application-error";
 
 type SessionUser = Omit<User, 'password'>;
 declare global {
@@ -71,4 +70,11 @@ export function getSessionUser(req: Request): SessionUser {
     if (!user) throw Error('no user in session. verify that isAuthenticated middleware is used.');
 
     return user;
+}
+
+
+class AuthError extends AbstractApplicationError {
+    statusCode: number = 401;
+    message: string = 'authentication failed';
+
 }
