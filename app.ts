@@ -25,6 +25,9 @@ app.listen(port, () => {
         .then(() => console.log('app started on port ' + port))
         .then(() => redisClient.connect())
         .then(() => console.log('redis connected'))
-        .catch(console.error);
+        .catch((e) => {
+            console.log(e);
+            throw e;
+        });
 });
 
