@@ -1,8 +1,8 @@
 # Matching app server
 
 ## databases
-
-1. update DATABASE_URL in .env for the correct db url
+0. create a .env file in the root dir
+1. update DATABASE_URL in .env for the db url
 2. update REDIS_URL in .env
 
 ## scripts

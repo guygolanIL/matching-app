@@ -59,6 +59,7 @@ export async function isAuthenticated(
         }
 
     } catch (error) {
+        console.warn(error);
         throw new AuthError();
     }
 }
@@ -80,5 +81,4 @@ export function getRequestToken(req: Request): string | undefined {
 class AuthError extends AbstractApplicationError {
     statusCode: number = 401;
     message: string = 'authentication failed';
-
 }
