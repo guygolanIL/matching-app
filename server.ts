@@ -1,6 +1,7 @@
 import { app } from "./app";
 import { prismaClient } from "./data/prisma-client";
 import { redisClient } from "./data/redis";
+import { uploadImage } from "./util/images/images";
 
 const port = process.env.PORT || 3000;
 
@@ -19,4 +20,5 @@ async function start() {
     }
 }
 
-start();
+// start();
+uploadImage()
