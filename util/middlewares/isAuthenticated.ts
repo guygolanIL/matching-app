@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { prismaClient } from "../../data/prisma-client";
+import { User } from "@prisma/client";
+
+import * as userService from '../../data/user/user-service';
 import { SecretError } from "../errors/secret-error";
 import { UserJwtPayload, verifyJwt } from "../jwt";
-import { User } from "@prisma/client";
 import { AbstractApplicationError } from "../errors/abstract-application-error";
 
 type SessionUser = Omit<User, 'password'>;
@@ -38,20 +39,15 @@ export async function isAuthenticated(
             throw new Error('failed to find user');
         }
 
-        const user = await prismaClient.user.findUnique({
-            where: {
-                email: userPayload.email
-            }
-        });
+        const user = await userService.findByEmail(userPayload.email);
 
         if (user) {
-            const { email, id, latitude, longitude, name, registeredAt } = user;
+            const { email, id, latitude, longitude, registeredAt } = user;
             req.user = {
                 email,
                 id,
                 latitude,
                 longitude,
-                name,
                 registeredAt
             };
             console.log("authenticated user", user.email);

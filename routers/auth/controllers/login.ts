@@ -2,9 +2,8 @@ import { User } from "@prisma/client";
 import { Request, Response } from "express";
 import { z } from "zod";
 
-import { prismaClient } from "../../../data/prisma-client";
-import { TokenCache } from "../../../data/redis";
 import * as userService from '../../../data/user/user-service';
+import { TokenCache } from "../../../data/redis";
 import { createApiResponse } from "../../../util/api/response";
 import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
 import { SecretError } from "../../../util/errors/secret-error";
@@ -12,11 +11,7 @@ import { verifyPassword } from "../../../util/hash";
 import { createJwt } from "../../../util/jwt";
 
 async function validate(email: string, password: string): Promise<User> {
-    const foundUser = await prismaClient.user.findUnique({
-        where: {
-            email
-        }
-    });
+    const foundUser = await userService.findByEmail(email);
 
     if (!foundUser) throw new LoginValidationError();
 
@@ -34,9 +29,7 @@ export const loginRequestSchema = z.object({
         latitude: z.number(),
     })
 });
-
 type LoginRequestPayload = z.infer<typeof loginRequestSchema>['body'];
-
 export async function login(req: Request, res: Response) {
     const { latitude, longitude, email, password } = req.body as LoginRequestPayload;
 

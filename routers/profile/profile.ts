@@ -1,8 +1,18 @@
 import { Router } from "express";
 
-import * as imageControllers from './controllers/image';
+import { validateRequest } from "../../util/middlewares/validate-request";
+import { getProfile } from "./controllers/getProfile";
+import { uploadImage, uploadImageRequestSchema } from "./controllers/uploadImage";
 
 export const profileRouter = Router();
 
-profileRouter.get('/image', imageControllers.getImage);
-profileRouter.post('/image', imageControllers.uploadImage);
+profileRouter.post(
+    '/image',
+    validateRequest(uploadImageRequestSchema),
+    uploadImage
+);
+
+profileRouter.get(
+    '/',
+    getProfile,
+);

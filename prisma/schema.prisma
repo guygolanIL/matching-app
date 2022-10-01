@@ -17,8 +17,28 @@ model User {
 
   userClassifications UserClassification[] @relation("classifications")
   classifiedBy        UserClassification[] @relation("classifiedBy")
+  userProfile         UserProfile?
+}
 
-  name String?
+model UserProfile {
+  id           Int           @id @default(autoincrement())
+  user         User          @relation(fields: [userId], references: [id])
+  userId       Int           @unique
+  profileImage ProfileImage?
+}
+
+enum ImageType {
+  png
+  jpeg
+}
+
+model ProfileImage {
+  id   Int       @id @default(autoincrement())
+  type ImageType
+  url  String
+
+  userProfile   UserProfile @relation(fields: [userProfileId], references: [id])
+  userProfileId Int         @unique
 }
 
 enum Attitude {

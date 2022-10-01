@@ -13,7 +13,7 @@ import { isAuthenticated } from './util/middlewares/isAuthenticated';
 export const app: Application = express();
 
 app.use(cors());
-app.use(json());
+app.use(json({ limit: 1000 * 1000 * 50 }));
 
 app.use("/auth", authRouter);
 app.use('/profile', isAuthenticated, profileRouter);

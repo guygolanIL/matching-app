@@ -1,4 +1,4 @@
-import { Attitude, User, UserClassification } from "@prisma/client";
+import { Attitude, ImageType, User, UserClassification, UserProfile, ProfileImage } from "@prisma/client";
 import { prismaClient } from "../prisma-client";
 
 export async function findByEmail(email: string): Promise<User | null> {
@@ -9,6 +9,21 @@ export async function findByEmail(email: string): Promise<User | null> {
     });
 
     return user;
+}
+
+export async function findUserProfile(userId: number): Promise<(UserProfile & {
+    profileImage: ProfileImage | null;
+}) | null> {
+    const profile = await prismaClient.userProfile.findUnique({
+        where: {
+            userId
+        },
+        include: {
+            profileImage: true
+        }
+    });
+
+    return profile;
 }
 
 type ClassifyUserOptions = {
@@ -39,7 +54,10 @@ export async function create(email: string, password: string): Promise<User> {
     const user = await prismaClient.user.create({
         data: {
             email,
-            password
+            password,
+            userProfile: {
+                create: {}
+            }
         }
     });
 
@@ -60,6 +78,29 @@ export async function updateLocation(email: string, location: Location): Promise
         data: {
             latitude,
             longitude
+        }
+    });
+}
+
+export async function updateProfileImage(userId: number, url: string, type: ImageType) {
+    return await prismaClient.userProfile.update({
+        where: { userId },
+        data: {
+            profileImage: {
+                upsert: {
+                    create: {
+                        type,
+                        url,
+                    },
+                    update: {
+                        type,
+                        url
+                    }
+                }
+            }
+        },
+        include: {
+            profileImage: true
         }
     });
 }
