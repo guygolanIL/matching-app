@@ -4,6 +4,7 @@ import { User } from "@prisma/client";
 import * as userService from '../../services/user-service';
 import * as tokenService from '../../services/token-service';
 import { AbstractApplicationError } from "../errors/abstract-application-error";
+import { TokenExpiredError } from "jsonwebtoken";
 
 type SessionUser = Omit<User, 'password'>;
 declare global {
@@ -49,6 +50,9 @@ export async function isAuthenticated(
 
     } catch (error) {
         console.warn(error);
+        if (error instanceof TokenExpiredError) {
+            throw new AuthError("jwt expired");
+        }
         throw new AuthError();
     }
 }
@@ -69,5 +73,10 @@ export function getRequestToken(req: Request): string | undefined {
 
 class AuthError extends AbstractApplicationError {
     statusCode: number = 401;
-    message: string = 'authentication failed';
+    message: string;
+
+    constructor(msg?: string) {
+        super();
+        this.message = msg || 'authentication failed';
+    }
 }
