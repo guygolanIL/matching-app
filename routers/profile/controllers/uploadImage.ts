@@ -2,7 +2,7 @@ import { ImageType, Prisma } from "@prisma/client";
 import { Request, Response } from "express";
 import z from 'zod';
 
-import * as userService from '../../../data/user/user-service';
+import * as userService from '../../../services/user-service';
 import { createApiResponse } from "../../../util/api/response";
 import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
 import * as imageStorage from '../../../util/image-storage';

@@ -1,5 +1,5 @@
 import { Attitude, ImageType, User, UserClassification, UserProfile, ProfileImage } from "@prisma/client";
-import { prismaClient } from "../prisma-client";
+import { prismaClient } from "../data/prisma-client";
 
 export async function findByEmail(email: string): Promise<User | null> {
     const user: User | null = await prismaClient.user.findFirst({

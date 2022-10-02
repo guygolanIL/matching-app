@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as userService from "../../../data/user/user-service";
+
+import * as userService from "../../../services/user-service";
 import { createApiResponse } from "../../../util/api/response";
 import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 

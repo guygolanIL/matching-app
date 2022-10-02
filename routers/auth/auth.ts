@@ -5,6 +5,7 @@ import { login, loginRequestSchema } from "./controllers/login";
 import { register, registerRequestSchema } from "./controllers/register";
 import { logout } from "./controllers/logout";
 import { isAuthenticated } from "../../util/middlewares/isAuthenticated";
+import { refresh } from "./controllers/refresh";
 
 export const authRouter = Router();
 
@@ -20,8 +21,13 @@ authRouter.post(
     register,
 );
 
-authRouter.post(
+authRouter.delete(
     '/logout',
     isAuthenticated,
     logout,
+);
+
+authRouter.post(
+    '/refresh',
+    refresh
 );

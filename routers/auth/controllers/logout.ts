@@ -1,15 +1,12 @@
 import { Request, Response } from "express";
 
 import { TokenCache } from "../../../data/redis";
-import { createApiResponse } from "../../../util/api/response";
 import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 
 
 export async function logout(req: Request, res: Response) {
     const user = getSessionUser(req);
-    await TokenCache.revoke(user.id);
+    await TokenCache.revokeToken(user.id);
 
-    res.status(200).json(createApiResponse({
-        yay: 'yoog'
-    }));
+    res.sendStatus(200);
 }

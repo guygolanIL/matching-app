@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { User } from "@prisma/client";
 
-import * as userService from '../../data/user/user-service';
-import { SecretError } from "../errors/secret-error";
-import { UserJwtPayload, verifyJwt } from "../jwt";
+import * as userService from '../../services/user-service';
+import * as tokenService from '../../services/token-service';
 import { AbstractApplicationError } from "../errors/abstract-application-error";
 
 type SessionUser = Omit<User, 'password'>;
@@ -27,13 +26,7 @@ export async function isAuthenticated(
     }
 
     try {
-        const secret = process.env.JWT_SECRET;
-        if (!secret) throw new SecretError();
-
-        const userPayload: UserJwtPayload | undefined = await verifyJwt(
-            token,
-            secret
-        );
+        const userPayload = await tokenService.verifyToken(token);
 
         if (!userPayload) {
             throw new Error('failed to find user');

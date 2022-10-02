@@ -2,13 +2,12 @@ import { User } from "@prisma/client";
 import { Request, Response } from "express";
 import { z } from "zod";
 
-import * as userService from '../../../data/user/user-service';
+import * as tokenService from '../../../services/token-service';
+import * as userService from '../../../services/user-service';
 import { TokenCache } from "../../../data/redis";
 import { createApiResponse } from "../../../util/api/response";
 import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
-import { SecretError } from "../../../util/errors/secret-error";
 import { verifyPassword } from "../../../util/hash";
-import { createJwt } from "../../../util/jwt";
 
 async function validate(email: string, password: string): Promise<User> {
     const foundUser = await userService.findByEmail(email);
@@ -35,15 +34,9 @@ export async function login(req: Request, res: Response) {
 
     const user = await validate(email, password);
 
-    const jwtSecret = process.env.JWT_SECRET;
-    const refreshJwtSecret = process.env.JWT_REFRESH_SECRET;
+    const { accessToken, refreshToken } = await tokenService.create(user);
 
-    if (!jwtSecret || !refreshJwtSecret) throw new SecretError();
-
-    const accessToken = createJwt({ email }, { secret: jwtSecret, expirationMinutes: 60 });
-    const refreshToken = createJwt({ email }, { secret: refreshJwtSecret, expirationMinutes: 60 });
-
-    await TokenCache.saveRefreshToken(user.id, refreshToken);
+    await TokenCache.saveToken(user.id, refreshToken);
 
     await userService.updateLocation(email, { longitude, latitude });
 
