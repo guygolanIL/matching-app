@@ -21,8 +21,8 @@ export async function create({ email, id }: User): Promise<{ accessToken: string
 
     if (!jwtSecret || !refreshJwtSecret) throw new SecretError();
 
-    const accessToken = createJwt({ email }, { secret: jwtSecret, expiresIn: '15s' });
-    const refreshToken = createJwt({ email }, { secret: refreshJwtSecret, expiresIn: '1d' });
+    const accessToken = createJwt({ email }, { secret: jwtSecret, expiresIn: '30m' });
+    const refreshToken = createJwt({ email }, { secret: refreshJwtSecret, expiresIn: '7d' });
 
     await TokenCache.saveToken(id, refreshToken);
 
