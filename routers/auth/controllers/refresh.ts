@@ -7,6 +7,8 @@ import * as userService from '../../../services/user-service';
 import { TokenCache } from "../../../data/redis";
 import { createApiResponse } from "../../../util/api/response";
 import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
+import { TokenExpiredError } from "jsonwebtoken";
+import { UserJwtPayload } from "../../../util/jwt";
 
 export const refreshRequestSchema = z.object({
     body: z.object({
@@ -17,7 +19,14 @@ type RefreshTokenRequestPayload = z.infer<typeof refreshRequestSchema>['body'];
 export async function refresh(req: Request, res: Response) {
     const { refreshToken } = req.body as RefreshTokenRequestPayload;
 
-    const userPayload = await tokenService.verifyRefreshToken(refreshToken);
+    let userPayload: UserJwtPayload | undefined;
+    try {
+        userPayload = await tokenService.verifyRefreshToken(refreshToken);
+    } catch (error) {
+        if (error instanceof TokenExpiredError) {
+            throw new RefreshTokenValidationError();
+        }
+    }
 
     if (!userPayload) {
         throw new Error('failed to parse jwt token');
