@@ -9,7 +9,7 @@ import { getSessionUser } from '../../../util/middlewares/isAuthenticated';
 export async function getProfile(req: Request, res: Response) {
     const user = getSessionUser(req);
 
-    const profile: UserProfile | null = await userService.findUserProfile(user.id);
+    const profile = await userService.findUserProfile(user.id);
 
     if (!profile) throw new ProfileNotFoundError(user.id);
 

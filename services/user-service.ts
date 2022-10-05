@@ -135,3 +135,29 @@ export async function findUsersProximateToUser({
             AND CALCULATE_DISTANCE(${user.latitude}, ${user.longitude}, u.LATITUDE, u.LONGITUDE, ${unit}) <= ${distanceLimit}
     `;
 }
+
+type PublicProfileInfos = Array<{
+    userId: number;
+    profileImgUri?: string;
+}>
+export async function findUsersPublicInfo(ids: Array<number>): Promise<PublicProfileInfos> {
+    const profiles = await prismaClient.userProfile.findMany({
+        include: {
+            profileImage: {
+                select: {
+                    url: true
+                }
+            }
+        },
+        where: {
+            userId: { in: ids }
+        }
+    });
+
+    const publicProfileInfos: PublicProfileInfos = profiles.map(({ userId, profileImage }) => ({
+        userId,
+        profileImgUri: profileImage?.url
+    }));
+
+    return publicProfileInfos;
+}

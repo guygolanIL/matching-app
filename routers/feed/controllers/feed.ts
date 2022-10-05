@@ -12,5 +12,7 @@ export async function feed(req: Request, res: Response) {
         distanceLimit: distance,
     });
 
-    res.status(200).json(createApiResponse(users));
+    const publicProfilesInfos = await userService.findUsersPublicInfo(users.map(user => user.id));
+
+    res.status(200).json(createApiResponse(publicProfilesInfos));
 }
