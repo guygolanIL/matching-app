@@ -13,7 +13,7 @@ export async function findByEmail(email: string): Promise<User | null> {
     return user;
 }
 
-export async function findUserProfile(userId: number): Promise<(UserProfile & {
+export async function findPrivateUserProfile(userId: number): Promise<(UserProfile & {
     profileImage: ProfileImage | null;
 }) | null> {
     const profile = await prismaClient.userProfile.findUnique({
@@ -21,7 +21,27 @@ export async function findUserProfile(userId: number): Promise<(UserProfile & {
             userId
         },
         include: {
-            profileImage: true
+            profileImage: true,
+            user: {
+                select: {
+                    email: true,
+                }
+            }
+        }
+    });
+
+    return profile;
+}
+
+export async function findPublicUserProfile(userId: number): Promise<(UserProfile & {
+    profileImage: ProfileImage | null;
+}) | null> {
+    const profile = await prismaClient.userProfile.findUnique({
+        where: {
+            userId
+        },
+        include: {
+            profileImage: true,
         }
     });
 
