@@ -1,5 +1,7 @@
-import { Attitude, ImageType, User, UserClassification, UserProfile, ProfileImage } from "@prisma/client";
+import { Attitude, ImageType, User, UserClassification, UserProfile, ProfileImage, Match } from "@prisma/client";
+
 import { prismaClient } from "../data/prisma-client";
+import * as matchService from './match-service';
 
 export async function findByEmail(email: string): Promise<User | null> {
     const user: User | null = await prismaClient.user.findFirst({
@@ -31,8 +33,15 @@ type ClassifyUserOptions = {
     targetUserId: number;
     attitude: Attitude;
 };
-export async function classifyUser({ attitude, targetUserId, userId }: ClassifyUserOptions): Promise<UserClassification> {
-    return await prismaClient.userClassification.upsert({
+export async function classifyUser({
+    attitude,
+    targetUserId,
+    userId }: ClassifyUserOptions
+): Promise<{
+    classification: UserClassification,
+    match?: Match;
+}> {
+    const classification = await prismaClient.userClassification.upsert({
         create: {
             attitude,
             classifierUserId: userId,
@@ -48,6 +57,29 @@ export async function classifyUser({ attitude, targetUserId, userId }: ClassifyU
             }
         },
     });
+
+    if (classification.attitude === 'POSITIVE') {
+        const oppositeClassification = await prismaClient.userClassification.findFirst({
+            where: {
+                classifierUserId: targetUserId,
+                classifiedUserId: userId
+            }
+        });
+
+        if (oppositeClassification?.attitude === 'POSITIVE') {
+            // its a match!
+            const match = await matchService.createMatch(userId, targetUserId);
+
+            return {
+                classification,
+                match,
+            };
+        }
+    }
+
+    return {
+        classification
+    };
 };
 
 export async function create(email: string, password: string): Promise<User> {
@@ -136,10 +168,11 @@ export async function findUsersProximateToUser({
     `;
 }
 
-type PublicProfileInfos = Array<{
+export type ProfileInfo = {
     userId: number;
     profileImgUri?: string;
-}>
+}
+type PublicProfileInfos = Array<ProfileInfo>
 export async function findUsersPublicInfo(ids: Array<number>): Promise<PublicProfileInfos> {
     const profiles = await prismaClient.userProfile.findMany({
         include: {

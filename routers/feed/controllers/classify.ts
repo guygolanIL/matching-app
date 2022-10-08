@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { z } from "zod";
 
 import * as userService from "../../../services/user-service";
-import { createApiResponse } from "../../../util/api/response";
+import { ApiResponse, createApiResponse } from "../../../util/api/response";
 import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 
 export const classifyRequestSchema = z.object({
@@ -13,15 +13,25 @@ export const classifyRequestSchema = z.object({
     }),
 });
 type ClassifyRequestBodySchema = z.infer<typeof classifyRequestSchema>['body'];
+
+type ResponseBody = ApiResponse<{
+    classification: UserClassification,
+    matchedUserId?: number;
+}>;
 export async function classify(req: Request, res: Response) {
     const requestPayload: ClassifyRequestBodySchema = req.body;
     const { attitude, classifiedUserId } = requestPayload;
 
-    const classification: UserClassification = await userService.classifyUser({
+    const result = await userService.classifyUser({
         userId: getSessionUser(req).id,
         attitude,
         targetUserId: classifiedUserId
     });
 
-    res.status(201).json(createApiResponse(classification));
+    const response: ResponseBody = createApiResponse({
+        classification: result.classification,
+        matchedUserId: result.match?.initiatingUserId
+    });
+
+    return res.status(201).json(response);
 }

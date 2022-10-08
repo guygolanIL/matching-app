@@ -1,5 +1,5 @@
 
-type ApiResponse<T> = {
+export type ApiResponse<T> = {
     result: T | undefined;
 };
 

@@ -18,6 +18,19 @@ model User {
   userClassifications UserClassification[] @relation("classifications")
   classifiedBy        UserClassification[] @relation("classifiedBy")
   userProfile         UserProfile?
+
+  initiatedMatches Match[] @relation(name: "initiatedMatches")
+  createdMatches   Match[] @relation(name: "createdMatches")
+}
+
+model Match {
+  creatingUserId   Int
+  initiatingUserId Int
+
+  creatingUser   User @relation(name: "createdMatches", fields: [creatingUserId], references: [id])
+  initiatingUser User @relation(name: "initiatedMatches", fields: [initiatingUserId], references: [id])
+
+  @@id([creatingUserId, initiatingUserId])
 }
 
 model UserProfile {
