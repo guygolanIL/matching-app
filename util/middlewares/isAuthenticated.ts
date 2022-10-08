@@ -46,6 +46,8 @@ export async function isAuthenticated(
             };
             console.log("authenticated user", user.email);
             next();
+        } else {
+            throw new Error('user not found');
         }
 
     } catch (error) {

@@ -1,4 +1,5 @@
 import { app } from "./app";
+import { createChatServer } from './chats';
 import { prismaClient } from "./data/prisma-client";
 import { redisClient } from "./data/redis";
 
@@ -9,9 +10,11 @@ async function start() {
     console.log('connected to db');
     await redisClient.connect();
     console.log('redis connected');
-    app.listen(port, () => {
+    const server = app.listen(port, () => {
         console.log('app started on port ' + port)
     });
+
+    createChatServer(server);
 }
 
 start();
