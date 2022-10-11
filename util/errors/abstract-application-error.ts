@@ -1,10 +1,11 @@
 import { ApiErrorResponse } from "./error-handler";
+import { StatusCode } from "./status-code";
 
 /**
  * Warning: this is a user facing error! 
  */
 export abstract class AbstractApplicationError extends Error {
-    abstract statusCode: number;
+    abstract statusCode: StatusCode;
     abstract message: string;
 
     constructor() {

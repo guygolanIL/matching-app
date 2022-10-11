@@ -3,28 +3,27 @@ import { Request, Response } from "express";
 import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 import * as matchingService from '../../../services/match-service';
 import { createApiResponse } from "../../../util/api/response";
-import { ProfileInfo } from "../../../services/user-service";
+import { PublicProfileInfo } from "../../../services/user-service";
+import { getMatchee } from "../util/matchee";
 
-type MatchInfo = ProfileInfo & { email: string };
+type MatchInfo = { id: number; matchedWith: PublicProfileInfo };
 
 export async function getMatches(req: Request, res: Response) {
 
     const user = getSessionUser(req);
     const matches = await matchingService.findMatches(user.id);
 
-    const matchInfos = matches.map(({ creatingUser, initiatingUser }) => {
-        if (creatingUser.id === user.id) {
-            return initiatingUser;
-        }
+    const matchInfos: Array<MatchInfo> = matches.map((match) => {
+        const matchedUser = getMatchee(user.id, match);
 
-        return creatingUser;
+        return {
+            id: match.id,
+            matchedWith: {
+                userId: matchedUser.id,
+                profileImage: matchedUser.userProfile?.profileImage || null,
+            }
+        };
     });
 
-    const result: Array<MatchInfo> = matchInfos.map(({ id, email, userProfile }) => ({
-        email,
-        userId: id,
-        profileImgUri: userProfile?.profileImage?.url
-    }));
-
-    return res.json(createApiResponse(result));
+    return res.json(createApiResponse(matchInfos));
 }

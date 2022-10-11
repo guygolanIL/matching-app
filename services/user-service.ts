@@ -188,11 +188,12 @@ export async function findUsersProximateToUser({
     `;
 }
 
-export type ProfileInfo = {
-    userId: number;
-    profileImgUri?: string;
-}
-type PublicProfileInfos = Array<ProfileInfo>
+export type PublicProfileInfo = Pick<
+    UserProfile & {
+        profileImage: Pick<ProfileImage, 'url'> | null
+    }, 'userId' | 'profileImage'
+>;
+type PublicProfileInfos = Array<PublicProfileInfo>;
 export async function findUsersPublicInfo(ids: Array<number>): Promise<PublicProfileInfos> {
     const profiles = await prismaClient.userProfile.findMany({
         include: {
@@ -209,7 +210,7 @@ export async function findUsersPublicInfo(ids: Array<number>): Promise<PublicPro
 
     const publicProfileInfos: PublicProfileInfos = profiles.map(({ userId, profileImage }) => ({
         userId,
-        profileImgUri: profileImage?.url
+        profileImage,
     }));
 
     return publicProfileInfos;

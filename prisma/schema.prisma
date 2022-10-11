@@ -19,18 +19,34 @@ model User {
   classifiedBy        UserClassification[] @relation("classifiedBy")
   userProfile         UserProfile?
 
-  initiatedMatches Match[] @relation(name: "initiatedMatches")
-  createdMatches   Match[] @relation(name: "createdMatches")
+  initiatedMatches Match[]   @relation(name: "initiatedMatches")
+  createdMatches   Match[]   @relation(name: "createdMatches")
+  messages         Message[]
 }
 
 model Match {
+  id               Int @id @default(autoincrement())
   creatingUserId   Int
   initiatingUserId Int
 
-  creatingUser   User @relation(name: "createdMatches", fields: [creatingUserId], references: [id])
-  initiatingUser User @relation(name: "initiatedMatches", fields: [initiatingUserId], references: [id])
+  createdAt DateTime @default(now())
 
-  @@id([creatingUserId, initiatingUserId])
+  creatingUser   User      @relation(name: "createdMatches", fields: [creatingUserId], references: [id])
+  initiatingUser User      @relation(name: "initiatedMatches", fields: [initiatingUserId], references: [id])
+  messages       Message[]
+
+  @@unique([creatingUserId, initiatingUserId])
+}
+
+model Message {
+  id              Int      @id @default(autoincrement())
+  createdByUserId Int
+  matchId         Int
+  content         String
+  createdAt       DateTime @default(now())
+
+  createdBy User  @relation(fields: [createdByUserId], references: [id])
+  match     Match @relation(fields: [matchId], references: [id])
 }
 
 model UserProfile {
