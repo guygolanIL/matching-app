@@ -4,7 +4,6 @@ import { z } from "zod";
 
 import * as tokenService from '../../../services/token-service'
 import * as userService from '../../../services/user-service';
-import { TokenCache } from "../../../data/redis";
 import { createApiResponse } from "../../../util/api/response";
 import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
 import { TokenExpiredError } from "jsonwebtoken";
@@ -38,13 +37,13 @@ export async function refresh(req: Request, res: Response) {
         throw new Error('failed to find user');
     }
 
-    const savedRefreshToken = await TokenCache.getToken(user.id);
+    const savedRefreshToken = await tokenService.getTokenFromCache(user.id);
 
     if (refreshToken !== savedRefreshToken) {
         throw new RefreshTokenValidationError();
     }
 
-    await TokenCache.revokeToken(user.id);
+    await tokenService.revokeTokenFromCache(user.id);
 
     const { accessToken, refreshToken: newRefreshToken } = await tokenService.create(user);
 

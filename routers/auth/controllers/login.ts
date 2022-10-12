@@ -4,7 +4,6 @@ import { z } from "zod";
 
 import * as tokenService from '../../../services/token-service';
 import * as userService from '../../../services/user-service';
-import { TokenCache } from "../../../data/redis";
 import { createApiResponse } from "../../../util/api/response";
 import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
 import { verifyPassword } from "../../../util/hash";
@@ -35,8 +34,6 @@ export async function login(req: Request, res: Response) {
     const user = await validate(email, password);
 
     const { accessToken, refreshToken } = await tokenService.create(user);
-
-    await TokenCache.saveToken(user.id, refreshToken);
 
     await userService.updateLocation(email, { longitude, latitude });
 

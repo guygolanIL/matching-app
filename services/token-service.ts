@@ -32,6 +32,14 @@ export async function create({ email, id }: User): Promise<{ accessToken: string
     };
 }
 
+export async function getTokenFromCache(userId: number) {
+    return TokenCache.getToken(userId);
+}
+
+export async function revokeTokenFromCache(userId: number) {
+    return TokenCache.revokeToken(userId);
+}
+
 export async function verifyToken(token: string): Promise<UserJwtPayload | undefined> {
     const secret = process.env.JWT_SECRET;
     const tokenPayload = await verify(token, secret);
