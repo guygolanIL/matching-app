@@ -9,10 +9,12 @@ export const registerRequestSchema = z.object({
     body: z.object({
         email: z.string().email(),
         password: z.string(),
-    })
+        confirmPassword: z.string()
+    }).refine((ctx) => ctx.confirmPassword === ctx.password, { message: 'Passwords must be identical' })
 });
+type RegisterPayloadBody = z.infer<typeof registerRequestSchema>['body'];
 export async function register(req: Request, res: Response) {
-    const { email, password } = req.body;
+    const { email, password } = req.body as RegisterPayloadBody;
 
     const alreadyExistingUser = await userService.findByEmail(email);
 
