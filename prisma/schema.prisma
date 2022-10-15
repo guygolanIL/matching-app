@@ -50,10 +50,19 @@ model Message {
 }
 
 model UserProfile {
-  id           Int           @id @default(autoincrement())
-  user         User          @relation(fields: [userId], references: [id])
-  userId       Int           @unique
+  id               Int              @id @default(autoincrement())
+  user             User             @relation(fields: [userId], references: [id])
+  userId           Int              @unique
+  name             String?
+  onboardingStatus OnboardingStatus @default(INITIAL)
+
   profileImage ProfileImage?
+}
+
+enum OnboardingStatus {
+  INITIAL
+  IN_PROGRESS
+  COMPLETED
 }
 
 enum ImageType {
@@ -62,12 +71,12 @@ enum ImageType {
 }
 
 model ProfileImage {
-  id   Int       @id @default(autoincrement())
-  type ImageType
-  url  String
+  id            Int       @id @default(autoincrement())
+  type          ImageType
+  url           String
+  userProfileId Int       @unique
 
-  userProfile   UserProfile @relation(fields: [userProfileId], references: [id])
-  userProfileId Int         @unique
+  userProfile UserProfile @relation(fields: [userProfileId], references: [id])
 }
 
 enum Attitude {

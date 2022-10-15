@@ -25,5 +25,6 @@ export async function getPublicProfile(req: Request, res: Response) {
     return res.json(createApiResponse({
         userId: profile.userId,
         profileImage: profile.profileImage,
+        name: profile.name,
     }));
 }

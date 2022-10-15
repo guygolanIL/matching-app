@@ -108,7 +108,9 @@ export async function create(email: string, password: string): Promise<User> {
             email,
             password,
             userProfile: {
-                create: {}
+                create: {
+                    onboardingStatus: 'INITIAL'
+                }
             }
         }
     });
