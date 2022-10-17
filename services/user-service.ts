@@ -1,4 +1,4 @@
-import { Attitude, ImageType, User, UserClassification, UserProfile, ProfileImage, Match } from "@prisma/client";
+import { Attitude, ImageType, User, UserClassification, UserProfile, ProfileImage, Match, OnboardingStatus } from "@prisma/client";
 
 import { prismaClient } from "../data/prisma-client";
 import * as matchService from './match-service';
@@ -31,6 +31,20 @@ export async function findPrivateUserProfile(userId: number): Promise<(UserProfi
     });
 
     return profile;
+}
+
+export async function updatePrivateUserProfile(userId: number, profileParams: { name: string, onboardingStatus: OnboardingStatus }) {
+    return prismaClient.userProfile.update({
+        where: {
+            userId,
+        },
+        include: {
+            profileImage: true
+        },
+        data: {
+            ...profileParams,
+        }
+    });
 }
 
 export async function findPublicUserProfile(userId: number): Promise<(UserProfile & {
