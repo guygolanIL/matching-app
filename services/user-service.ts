@@ -116,7 +116,7 @@ export async function classifyUser({
     };
 };
 
-export async function create(email: string, password: string): Promise<User> {
+export async function create(email: string, password?: string): Promise<User> {
     const user = await prismaClient.user.create({
         data: {
             email,

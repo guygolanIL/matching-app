@@ -10,7 +10,7 @@ datasource db {
 model User {
   id           Int      @id @default(autoincrement())
   email        String   @unique
-  password     String
+  password     String?
   longitude    Float    @default(0) @db.DoublePrecision
   latitude     Float    @default(0) @db.DoublePrecision
   registeredAt DateTime @default(now())

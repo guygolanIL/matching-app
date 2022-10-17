@@ -11,7 +11,7 @@ import { verifyPassword } from "../../../util/hash";
 async function validate(email: string, password: string): Promise<User> {
     const foundUser = await userService.findByEmail(email);
 
-    if (!foundUser) throw new LoginValidationError();
+    if (!foundUser || !foundUser.password) throw new LoginValidationError();
 
     const correctPass: boolean = await verifyPassword(password, foundUser.password);
     if (!correctPass) throw new LoginValidationError();
