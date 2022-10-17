@@ -8,16 +8,16 @@ import { createApiResponse } from "../../../util/api/response";
 
 export const googleLoginRequestSchema = z.object({
     body: z.object({
-        access_token: z.string(),
+        googleAccessToken: z.string(),
         longitude: z.number(),
         latitude: z.number(),
     }),
 });
 type GoogleLoginRequestBody = z.infer<typeof googleLoginRequestSchema>['body'];
 export async function googleLogin(req: Request, res: Response) {
-    const { access_token, latitude, longitude } = req.body as GoogleLoginRequestBody;
+    const { googleAccessToken, latitude, longitude } = req.body as GoogleLoginRequestBody;
 
-    const googleUser: googleClient.GoogleUserInfo = await googleClient.getUser(access_token);
+    const googleUser: googleClient.GoogleUserInfo = await googleClient.getUser(googleAccessToken);
 
     let user = await userService.findByEmail(googleUser.email);
 
