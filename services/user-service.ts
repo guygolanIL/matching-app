@@ -33,7 +33,7 @@ export async function findPrivateUserProfile(userId: number): Promise<(UserProfi
     return profile;
 }
 
-export async function updatePrivateUserProfile(userId: number, profileParams: { name: string, onboardingStatus: OnboardingStatus }) {
+export async function updatePrivateUserProfile(userId: number, profileParams: { name?: string, onboardingStatus?: OnboardingStatus }) {
     return prismaClient.userProfile.update({
         where: {
             userId,

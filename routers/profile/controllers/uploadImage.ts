@@ -1,4 +1,4 @@
-import { ImageType, Prisma } from "@prisma/client";
+import { ImageType } from "@prisma/client";
 import { Request, Response } from "express";
 import z from 'zod';
 
@@ -8,18 +8,19 @@ import { AbstractApplicationError } from "../../../util/errors/abstract-applicat
 import * as imageStorage from '../../../util/image-storage';
 import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 
+export const uploadImageParams = z.object({
+    type: z.enum([ImageType.png, ImageType.jpeg]),
+    base64: z.string(),
+});
 export const uploadImageRequestSchema = z.object({
-    body: z.object({
-        type: z.enum([ImageType.png, ImageType.jpeg]),
-        base64: z.string(),
-    }),
+    body: uploadImageParams,
 });
 type UploadImageRequestBodySchema = z.infer<typeof uploadImageRequestSchema>['body'];
 export async function uploadImage(req: Request, res: Response) {
     const { base64, type }: UploadImageRequestBodySchema = req.body;
 
     const user = getSessionUser(req);
-    const url = await imageStorage.upload({ base64, type });
+    const url = await imageStorage.upload({ base64, type, folder: 'avatars' });
 
     const profile = await userService.updateProfileImage(user.id, url, type);
 

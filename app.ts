@@ -10,6 +10,7 @@ import { profileRouter } from './routers/profile/profile';
 import { feedRouter } from './routers/feed/feed';
 import { isAuthenticated } from './util/middlewares/isAuthenticated';
 import { matchRouter } from './routers/match/match';
+import { onboardingRouter } from './routers/onboarding/onboarding';
 
 export const app: Application = express();
 
@@ -20,5 +21,6 @@ app.use("/auth", authRouter);
 app.use('/profile', isAuthenticated, profileRouter);
 app.use('/feed', isAuthenticated, feedRouter);
 app.use('/match', isAuthenticated, matchRouter);
+app.use('/onboarding', isAuthenticated, onboardingRouter)
 
 app.use(errorHandler);
