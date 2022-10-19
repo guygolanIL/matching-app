@@ -15,11 +15,12 @@ export async function getMatches(req: Request, res: Response) {
 
     const matchInfos: Array<MatchInfo> = matches.map((match) => {
         const matchedUser = getMatchee(user.id, match);
-
+        if (!matchedUser.userProfile) console.error('matched with user without profile');
         return {
             id: match.id,
             matchedWith: {
                 userId: matchedUser.id,
+                name: matchedUser.userProfile!.name,
                 profileImage: matchedUser.userProfile?.profileImage || null,
             }
         };

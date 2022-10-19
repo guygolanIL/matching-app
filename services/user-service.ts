@@ -207,7 +207,8 @@ export async function findUsersProximateToUser({
 export type PublicProfileInfo = Pick<
     UserProfile & {
         profileImage: Pick<ProfileImage, 'url'> | null
-    }, 'userId' | 'profileImage'
+    },
+    'userId' | 'profileImage' | 'name'
 >;
 type PublicProfileInfos = Array<PublicProfileInfo>;
 export async function findUsersPublicInfo(ids: Array<number>): Promise<PublicProfileInfos> {
@@ -224,8 +225,9 @@ export async function findUsersPublicInfo(ids: Array<number>): Promise<PublicPro
         }
     });
 
-    const publicProfileInfos: PublicProfileInfos = profiles.map(({ userId, profileImage }) => ({
+    const publicProfileInfos: PublicProfileInfos = profiles.map(({ userId, profileImage, name }) => ({
         userId,
+        name,
         profileImage,
     }));
 
