@@ -43,7 +43,6 @@ export const SocketContext: ISocketContext = {
 
     emitIfConnected<TEvent extends keyof ServerToClientEvents>(userId: number, event: TEvent, ...eventPayload: Parameters<ServerToClientEvents[TEvent]>) {
         const recipientSocketId = this.getSocketId(userId);
-        console.log(this, recipientSocketId);
         if (recipientSocketId) { // user is online
             this.io?.to(recipientSocketId).emit(event, ...eventPayload);
         }

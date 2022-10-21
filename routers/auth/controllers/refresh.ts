@@ -47,7 +47,7 @@ export async function refresh(req: Request, res: Response) {
 
     const { accessToken, refreshToken: newRefreshToken } = await tokenService.create(user);
 
-    console.log('refreshed token', user);
+    console.log('refreshed token', user.email);
     res.status(201).json(createApiResponse({
         accessToken,
         refreshToken: newRefreshToken,

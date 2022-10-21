@@ -21,7 +21,6 @@ export async function isAuthenticated(
     next: NextFunction
 ) {
     const token = getRequestToken(req);
-    console.log("received token: " + token);
     if (!token) {
         throw new AuthError();
     }

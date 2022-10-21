@@ -32,16 +32,13 @@ export function createChatServer(server?: Server) {
 
     socketServer.on('connection', (socket) => {
         SocketContext.connect(socket.id);
-        console.log('new user connected');
 
         socket.on('identify', (identification) => {
             SocketContext.identify(socket.id, identification);
-            console.log('user identified as', identification);
         });
 
         socket.on('disconnect', (reason) => {
             SocketContext.disconnect(socket.id);
-            console.log('user disconnected')
         });
     });
 
