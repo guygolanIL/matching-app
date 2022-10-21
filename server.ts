@@ -1,5 +1,5 @@
 import { app } from "./app";
-import { createChatServer } from './socket/chats';
+import { createChatServer } from './socket/socket-server';
 import { prismaClient } from "./data/prisma-client";
 import { redisClient } from "./data/redis";
 

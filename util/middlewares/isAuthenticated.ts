@@ -30,7 +30,7 @@ export async function isAuthenticated(
         const userPayload = await tokenService.verifyToken(token);
 
         if (!userPayload) {
-            throw new Error('failed to find user');
+            throw new Error(`failed to find user with token ${token}`);
         }
 
         const user = await userService.findByEmail(userPayload.email);

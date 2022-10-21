@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { z } from "zod";
 
-import { SocketContext } from '../../../socket/chats';
 import * as matchingService from '../../../services/match-service';
 import { createApiResponse } from "../../../util/api/response";
 import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 import { getMatchee } from "../util/matchee";
 import { AbstractApplicationError } from "../../../util/errors/abstract-application-error";
 import { StatusCode } from "../../../util/errors/status-code";
+import { SocketContext } from "../../../socket/SocketContext";
 
 export const createMessageRequestSchema = z.object({
     content: z.string(),

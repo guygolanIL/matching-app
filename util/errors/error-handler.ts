@@ -22,7 +22,7 @@ function zodErrorParser(error: ZodError): ApiErrorResponse {
 function generalErrorParser(e: Error): ApiErrorResponse {
     return {
         issues: [{
-            message: 'unknown error occured',
+            message: 'Sorry, unknown error occured',
         }],
     };
 }

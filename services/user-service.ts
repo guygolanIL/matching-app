@@ -66,12 +66,14 @@ type ClassifyUserOptions = {
     userId: number;
     targetUserId: number;
     attitude: Attitude;
+    onMatchCreated?(match: Match, matcheeUserId: number): void;
 };
 export async function classifyUser({
     attitude,
     targetUserId,
-    userId }: ClassifyUserOptions
-): Promise<{
+    userId,
+    onMatchCreated,
+}: ClassifyUserOptions): Promise<{
     classification: UserClassification,
     match?: Match;
 }> {
@@ -103,6 +105,7 @@ export async function classifyUser({
         if (oppositeClassification?.attitude === 'POSITIVE') {
             // its a match!
             const match = await matchService.createMatch(userId, targetUserId);
+            onMatchCreated?.(match, targetUserId);
 
             return {
                 classification,

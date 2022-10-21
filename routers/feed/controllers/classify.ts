@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { z } from "zod";
 
 import * as userService from "../../../services/user-service";
+import { SocketContext } from "../../../socket/SocketContext";
 import { ApiResponse, createApiResponse } from "../../../util/api/response";
 import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 
@@ -21,11 +22,14 @@ type ResponseBody = ApiResponse<{
 export async function classify(req: Request, res: Response) {
     const requestPayload: ClassifyRequestBodySchema = req.body;
     const { attitude, classifiedUserId } = requestPayload;
-
+    const userId = getSessionUser(req).id;
     const result = await userService.classifyUser({
-        userId: getSessionUser(req).id,
+        userId,
         attitude,
-        targetUserId: classifiedUserId
+        targetUserId: classifiedUserId,
+        onMatchCreated(match, matcheeUserId) {
+            SocketContext.emitIfConnected(matcheeUserId, 'matchCreated', match);
+        }
     });
 
     const response: ResponseBody = createApiResponse({

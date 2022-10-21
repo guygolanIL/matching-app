@@ -34,7 +34,7 @@ export async function refresh(req: Request, res: Response) {
     const user = await userService.findByEmail(userPayload.email);
 
     if (!user) {
-        throw new Error('failed to find user');
+        throw new Error(`failed to find user with email ${userPayload.email}`);
     }
 
     const savedRefreshToken = await tokenService.getTokenFromCache(user.id);
