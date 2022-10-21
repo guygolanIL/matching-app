@@ -6,7 +6,7 @@ import { createApiResponse } from "../../../util/api/response";
 import { PublicProfileInfo } from "../../../services/user-service";
 import { getMatchee } from "../util/matchee";
 
-type MatchInfo = { id: number; matchedWith: PublicProfileInfo };
+export type MatchInfo = { id: number; matchedWith: PublicProfileInfo };
 
 export async function getMatches(req: Request, res: Response) {
 

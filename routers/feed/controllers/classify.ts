@@ -6,6 +6,7 @@ import * as userService from "../../../services/user-service";
 import { SocketContext } from "../../../socket/SocketContext";
 import { ApiResponse, createApiResponse } from "../../../util/api/response";
 import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
+import { getMatchee } from "../../match/util/matchee";
 
 export const classifyRequestSchema = z.object({
     body: z.object({
@@ -28,6 +29,7 @@ export async function classify(req: Request, res: Response) {
         attitude,
         targetUserId: classifiedUserId,
         onMatchCreated(match, matcheeUserId) {
+            // const matchee = getMatchee(userId, match);
             SocketContext.emitIfConnected(matcheeUserId, 'matchCreated', match);
         }
     });
