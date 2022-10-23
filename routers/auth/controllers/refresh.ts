@@ -28,6 +28,7 @@ export async function refresh(req: Request, res: Response) {
     }
 
     if (!userPayload) {
+        console.log(`bad user payload in refresh token`, userPayload);
         throw new Error('failed to parse jwt token');
     }
 
@@ -40,6 +41,7 @@ export async function refresh(req: Request, res: Response) {
     const savedRefreshToken = await tokenService.getTokenFromCache(user.id);
 
     if (refreshToken !== savedRefreshToken) {
+        console.log(`refresh token sent ${refreshToken} is different from saved refresh token ${savedRefreshToken}`);
         throw new RefreshTokenValidationError();
     }
 
@@ -56,5 +58,5 @@ export async function refresh(req: Request, res: Response) {
 
 class RefreshTokenValidationError extends AbstractApplicationError {
     statusCode: number = 401;
-    message: string = 'bad refresh token';
+    message: string = 'Login error';
 }

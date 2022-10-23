@@ -10,7 +10,7 @@ export type ISocketContext = {
     identify(socketId: string, identification: SocketIdentification): void;
     disconnect(socketId: string): void;
 
-    getSocketId(userId: number): string | undefined;
+    _getSocketId(userId: number): string | undefined;
     emitIfConnected<TEvent extends keyof ServerToClientEvents>(userId: number, event: TEvent, ...eventPayload: Parameters<ServerToClientEvents[TEvent]>): void;
 };
 type SocketInfo = {
@@ -24,6 +24,13 @@ export const SocketContext: ISocketContext = {
         this.info[socketId] = {};
     },
     identify(socketId, identification) {
+        const existingSocketInfo = Object.entries(this.info).find(([socketId, socketInfo]) => socketInfo.userId === identification.userId);
+
+        if (existingSocketInfo) {
+            const [existingSocketId, _] = existingSocketInfo;
+            delete this.info[existingSocketId];
+        }
+
         this.info[socketId] = {
             ...identification
         };
@@ -32,7 +39,7 @@ export const SocketContext: ISocketContext = {
         delete this.info[socketId];
     },
 
-    getSocketId(userId) {
+    _getSocketId(userId) {
         const result = Object.entries(this.info).find(([socketId, socketInfo]) => socketInfo.userId === userId);
 
         if (!result) return;
@@ -42,9 +49,11 @@ export const SocketContext: ISocketContext = {
     },
 
     emitIfConnected<TEvent extends keyof ServerToClientEvents>(userId: number, event: TEvent, ...eventPayload: Parameters<ServerToClientEvents[TEvent]>) {
-        const recipientSocketId = this.getSocketId(userId);
+        const recipientSocketId = this._getSocketId(userId);
         if (recipientSocketId) { // user is online
             this.io?.to(recipientSocketId).emit(event, ...eventPayload);
+        } else {
+            console.log('user is not online');
         }
     },
 } 

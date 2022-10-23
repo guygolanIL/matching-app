@@ -4,7 +4,7 @@ import { getSessionUser } from "../../../util/middlewares/isAuthenticated";
 import * as matchingService from '../../../services/match-service';
 import { createApiResponse } from "../../../util/api/response";
 import { PublicProfileInfo } from "../../../services/user-service";
-import { getMatchee } from "../util/matchee";
+import { getMatcheeUserId } from "../util/matchee";
 
 export type MatchInfo = { id: number; matchedWith: PublicProfileInfo };
 
@@ -14,16 +14,18 @@ export async function getMatches(req: Request, res: Response) {
     const matches = await matchingService.findMatches(user.id);
 
     const matchInfos: Array<MatchInfo> = matches.map((match) => {
-        const matchedUser = getMatchee(user.id, match);
-        if (!matchedUser.userProfile) console.error('matched with user without profile');
-        return {
+        const matchedUserId = getMatcheeUserId(user.id, match);
+        const matchedUser = matchedUserId === match.creatingUser.id ? match.creatingUser : match.initiatingUser;
+        const matchInfo: MatchInfo = {
             id: match.id,
             matchedWith: {
-                userId: matchedUser.id,
                 name: matchedUser.userProfile!.name,
-                profileImage: matchedUser.userProfile?.profileImage || null,
+                userId: matchedUser.id,
+                profileImage: matchedUser.userProfile!.profileImage,
             }
         };
+
+        return matchInfo;
     });
 
     return res.json(createApiResponse(matchInfos));

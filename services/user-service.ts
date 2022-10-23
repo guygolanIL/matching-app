@@ -47,9 +47,7 @@ export async function updatePrivateUserProfile(userId: number, profileParams: { 
     });
 }
 
-export async function findPublicUserProfile(userId: number): Promise<(UserProfile & {
-    profileImage: ProfileImage | null;
-}) | null> {
+export async function findPublicUserProfile(userId: number): Promise<PublicProfileInfo | null> {
     const profile = await prismaClient.userProfile.findUnique({
         where: {
             userId

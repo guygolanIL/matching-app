@@ -1,6 +1,7 @@
-import { Match } from '@prisma/client';
 import { Server } from 'http';
 import { Server as SocketServer } from 'socket.io';
+
+import { MatchInfo } from '../routers/match/controllers/getMatches';
 import { SocketContext } from './SocketContext';
 
 // copy this to the client
@@ -16,7 +17,7 @@ export type ClientToServerEvents = {
 // copy this interface to the client
 export type ServerToClientEvents = {
     messagesUpdated: () => void;
-    matchCreated: (match: Match) => void;
+    matchCreated: (match: MatchInfo) => void;
 };
 
 export interface InterServerEvents {

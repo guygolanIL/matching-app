@@ -52,7 +52,7 @@ export async function isAuthenticated(
     } catch (error) {
         console.warn(error);
         if (error instanceof TokenExpiredError) {
-            throw new AuthError("jwt expired");
+            throw new AuthError("Jwt expired");
         }
         throw new AuthError();
     }
@@ -78,6 +78,6 @@ class AuthError extends AbstractApplicationError {
 
     constructor(msg?: string) {
         super();
-        this.message = msg || 'authentication failed';
+        this.message = msg || 'Authentication failed';
     }
 }
