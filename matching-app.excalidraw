@@ -1183,8 +1183,8 @@
     },
     {
       "type": "text",
-      "version": 1779,
-      "versionNonce": 664769211,
+      "version": 1801,
+      "versionNonce": 1574693806,
       "isDeleted": false,
       "id": "_Ft9sQP0z51Bbr5E04cQv",
       "fillStyle": "hachure",
@@ -1203,17 +1203,17 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1666359490615,
+      "updated": 1666545126307,
       "link": null,
       "locked": false,
       "fontSize": 36,
       "fontFamily": 1,
-      "text": "\n\n\n1. close chat\n2. bugs (chat socket broken)\n3. live match notification\n4. onboarding inputs\n    on your self\n    - dob \n    - your gender (radio)\n\n    on the other\n    - gender (radio)\n    - looking for age range (min max)\n\n5. profile page\n    on self:\n    - languages (check box)\n    - work? (select box)\n    - education (high school/academic) (select box)\n    - if(academic) which field (select box)\n    - height (numeric)\n    - how active (select box)\n    - drink? (select box)\n    - smoke? (select box)\n    - kids? (select box)\n    - politics (select box)\n    - religion (select box)\n    \n\n    on other\n    6. radius\n ",
+      "text": "\n\n\n1. close chat\n2. bugs (chat socket broken) - Done\n3. live match notification - Done\n4. onboarding inputs\n    on your self\n    - dob \n    - your gender (radio)\n\n    on the other\n    - gender (radio)\n    - looking for age range (min max)\n\n5. profile page\n    on self:\n    - languages (check box)\n    - work? (select box)\n    - education (high school/academic) (select box)\n    - if(academic) which field (select box)\n    - height (numeric)\n    - how active (select box)\n    - drink? (select box)\n    - smoke? (select box)\n    - kids? (select box)\n    - politics (select box)\n    - religion (select box)\n    \n\n    on other\n    6. radius\n ",
       "baseline": 1472,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "\n\n\n1. close chat\n2. bugs (chat socket broken)\n3. live match notification\n4. onboarding inputs\n    on your self\n    - dob \n    - your gender (radio)\n\n    on the other\n    - gender (radio)\n    - looking for age range (min max)\n\n5. profile page\n    on self:\n    - languages (check box)\n    - work? (select box)\n    - education (high school/academic) (select box)\n    - if(academic) which field (select box)\n    - height (numeric)\n    - how active (select box)\n    - drink? (select box)\n    - smoke? (select box)\n    - kids? (select box)\n    - politics (select box)\n    - religion (select box)\n    \n\n    on other\n    6. radius\n "
+      "originalText": "\n\n\n1. close chat\n2. bugs (chat socket broken) - Done\n3. live match notification - Done\n4. onboarding inputs\n    on your self\n    - dob \n    - your gender (radio)\n\n    on the other\n    - gender (radio)\n    - looking for age range (min max)\n\n5. profile page\n    on self:\n    - languages (check box)\n    - work? (select box)\n    - education (high school/academic) (select box)\n    - if(academic) which field (select box)\n    - height (numeric)\n    - how active (select box)\n    - drink? (select box)\n    - smoke? (select box)\n    - kids? (select box)\n    - politics (select box)\n    - religion (select box)\n    \n\n    on other\n    6. radius\n "
     },
     {
       "type": "line",

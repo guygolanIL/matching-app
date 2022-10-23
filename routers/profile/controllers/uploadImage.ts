@@ -31,5 +31,5 @@ export async function uploadImage(req: Request, res: Response) {
 
 class ProfileImageUploadError extends AbstractApplicationError {
     statusCode: number = 400;
-    message: string = 'failed to upload profile image';
+    message: string = 'Failed to upload profile image';
 }

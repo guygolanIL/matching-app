@@ -21,6 +21,6 @@ export class ProfileNotFoundError extends AbstractApplicationError {
 
     constructor(userId: number) {
         super();
-        this.message = `failed to find profile of user ${userId}`;
+        this.message = `Failed to find profile of user ${userId}`;
     }
 }

@@ -38,6 +38,6 @@ class MatchNotFoundError extends AbstractApplicationError {
 
     constructor(matchId: number) {
         super();
-        this.message = `match ${matchId} not found`
+        this.message = `Match ${matchId} not found`
     }
 }

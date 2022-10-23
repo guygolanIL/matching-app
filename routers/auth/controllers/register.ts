@@ -35,6 +35,6 @@ export class UserAlreadyExistsError extends AbstractApplicationError {
 
     constructor(email: string) {
         super();
-        this.message = `user with email ${email} already exists`;
+        this.message = `User with email ${email} already exists`;
     }
 }
